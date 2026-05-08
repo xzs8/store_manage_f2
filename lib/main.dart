@@ -26,8 +26,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'متجر الشهاب',
       theme: ThemeData(
-        useMaterial3: true,
-        primarySwatch: Colors.blue,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xFF121212), // نفس خلفية اللوجن
+        primaryColor: const Color(0xFFF57C00), // البرتقالي حق الشهاب
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFF57C00),
+          brightness: Brightness.dark,
+        ),
       ),
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
@@ -57,14 +62,15 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
+
   int _currentIndex = 0;
 
   // قائمة الصفحات (تأكد من إنشاء هذه الكلاسات في ملفاتها)
   final List<Widget> _pages = [
-     HomeScreen(),          // 1. عرض المنتجات
-    const Center(child: Text("صفحة السلة")), // 2. السلة (استبدلها بـ CartScreen)
-    const Center(child: Text("تتبع الطلب")), // 3. التتبع (استبدلها بـ TrackingScreen)
-    const Center(child: Text("الملف الشخصي")), // 4. البيانات (استبدلها بـ ProfileScreen)
+    HomeScreen(),
+    CartScreen(),
+    OrderTrackingScreen(),
+    ProfileScreen(),
   ];
 
   @override

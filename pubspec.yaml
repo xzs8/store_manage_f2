@@ -32,9 +32,10 @@ dependencies:
     sdk: flutter
 
   firebase_core:
-  firebase_auth:
+  firebase_auth: ^6.4.0
   cloud_firestore:
   firebase_storage:
+  google_sign_in: ^6.2.1
 
   provider:
   image_picker:
