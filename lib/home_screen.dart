@@ -53,14 +53,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        title: const Text("متجر الشهاب", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        title: const Center(child: Text("متجر الشهاب", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
         backgroundColor: primaryOrange,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart, color: Colors.black),
-            onPressed: () => Navigator.pushNamed(context, '/cart'),
-          )
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
