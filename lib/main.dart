@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'login_screen.dart';
 import 'home_screen.dart';
-// تأكد من استيراد بقية الصفحات هنا
 import 'profile_screen.dart';
 import 'cart_screen.dart';
 import 'order_tracking_screen.dart';
