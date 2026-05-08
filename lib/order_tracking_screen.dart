@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class OrderTrackingScreen extends StatelessWidget {
   const OrderTrackingScreen({super.key});
+
+  // دالة مساعدة لتنسيق التاريخ بشكل مقروء
+  String _formatDate(Timestamp? timestamp) {
+    if (timestamp == null) return "جاري التحميل...";
+    var date = timestamp.toDate();
+    return "${date.year}/${date.month}/${date.day}";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,16 +20,17 @@ class OrderTrackingScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        title: const Text("تتبع طلباتي"),
+        title: const Text("تتبع طلباتي", style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: StreamBuilder<QuerySnapshot>(
-        // جلب طلبات المستخدم الحالي فقط وترتيبها بالأحدث
+        // جلب طلبات المستخدم الحالي فقط وترتيبها من الأحدث للأقدم
         stream: FirebaseFirestore.instance
             .collection('orders')
             .where('userId', isEqualTo: user?.uid)
+            .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -32,7 +39,14 @@ class OrderTrackingScreen extends StatelessWidget {
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(
-              child: Text("لم تقم بأي طلبات بعد", style: TextStyle(color: Colors.white54)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.history, size: 70, color: Colors.white10),
+                  SizedBox(height: 15),
+                  Text("لم تقم بأي طلبات بعد", style: TextStyle(color: Colors.white54)),
+                ],
+              ),
             );
           }
 
@@ -46,7 +60,7 @@ class OrderTrackingScreen extends StatelessWidget {
               // تحديد لون الأيقونة والحالة
               Color statusColor;
               IconData statusIcon;
-              String statusText = data['status'] ?? 'قيد المعالجة';
+              String statusText = data['status'] ?? 'قيد الانتظار';
 
               switch (statusText) {
                 case 'تم التوصيل':
@@ -80,9 +94,14 @@ class OrderTrackingScreen extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("طلب #${order.id.substring(0, 8)}", // عرض جزء من الرقم التسلسلي
+                              Text("طلب #${order.id.substring(0, 8)}",
                                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                               const SizedBox(height: 5),
+                              // عرض تاريخ الطلب
+                              Text(
+                                _formatDate(data['createdAt'] as Timestamp?),
+                                style: const TextStyle(color: Colors.white38, fontSize: 12),
+                              ),
                             ],
                           ),
                           Container(
@@ -103,10 +122,12 @@ class OrderTrackingScreen extends StatelessWidget {
                         ],
                       ),
                       const Divider(color: Colors.white10, height: 25),
+
+                      // تفاصيل إضافية للطلب (اختياري)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("إجمالي المبلغ:", style: TextStyle(color: Colors.white70)),
+                          const Text("إجمالي المبلغ:", style: TextStyle(color: Colors.white70)),
                           Text("${data['totalPrice']} SAR",
                               style: const TextStyle(color: primaryOrange, fontWeight: FontWeight.bold, fontSize: 16)),
                         ],

@@ -140,8 +140,31 @@ class CartScreen extends StatelessWidget {
     if (user == null) return;
 
     try {
+      // جلب بيانات العميل الحقيقية من كولكشن users
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      // التحقق من وجود البيانات لتجنب "عميل غير مسجل"
+      if (!userDoc.exists ||
+          userDoc['fullName'] == null || userDoc['fullName'].toString().isEmpty ||
+          userDoc['phone'] == null || userDoc['phone'].toString().isEmpty) {
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("يرجى إكمال بياناتك في البروفايل أولاً (الاسم ورقم الهاتف)")),
+          );
+        }
+        return;
+      }
+
+      // إرسال الطلب مع كافة التفاصيل لصاحب المتجر
       await FirebaseFirestore.instance.collection('orders').add({
         'userId': user.uid,
+        'userName': userDoc['fullName'], // الاسم الحقيقي من البروفايل
+        'userPhone': userDoc['phone'],   // رقم الهاتف للتواصل
+        'userAddress': userDoc['address'] ?? 'لم يحدد عنوان',
         'userEmail': user.email,
         'totalPrice': total,
         'status': 'قيد الانتظار',
@@ -149,7 +172,7 @@ class CartScreen extends StatelessWidget {
         'items': items.map((i) => i.data()).toList(),
       });
 
-      // مسح السلة بعد الطلب
+      // مسح السلة
       for (var item in items) {
         await item.reference.delete();
       }
@@ -162,7 +185,7 @@ class CartScreen extends StatelessWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("خطأ: $e"), backgroundColor: Colors.red),
+          SnackBar(content: Text("خطأ أثناء الطلب: $e"), backgroundColor: Colors.red),
         );
       }
     }
