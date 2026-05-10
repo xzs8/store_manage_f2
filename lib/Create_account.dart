@@ -22,14 +22,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     try {
       _showLoading();
-
-      // 1. إنشاء الحساب في Auth
       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      // 2. حفظ البيانات الإضافية في Firestore
       await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
         'name': _nameController.text.trim(),
         'email': _emailController.text.trim(),
@@ -38,8 +35,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
 
       if (mounted) {
-        Navigator.of(context, rootNavigator: true).pop(); // إغلاق الدائرة
-        Navigator.pop(context); // العودة للوجن أو الرئيسية
+        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) Navigator.of(context, rootNavigator: true).pop();

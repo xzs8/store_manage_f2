@@ -26,10 +26,10 @@ class MyApp extends StatelessWidget {
       title: 'متجر الشهاب',
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF121212), // نفس خلفية اللوجن
-        primaryColor: const Color(0xFFF57C00), // البرتقالي حق الشهاب
+        scaffoldBackgroundColor: Color(0xFF121212),
+        primaryColor: Color(0xFFF57C00),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFF57C00),
+          seedColor: Color(0xFFF57C00),
           brightness: Brightness.dark,
         ),
       ),
@@ -37,22 +37,20 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
+            return Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }
           if (snapshot.hasData) {
-            // بدلاً من HomeScreen مباشرة، نفتح الـ RootPage التي تحتوي على الـ NavBar
-            return const RootPage();
+            return RootPage();
           }
-          return const LoginScreen();
+          return LoginScreen();
         },
       ),
     );
   }
 }
 
-// هذه هي الصفحة الأساسية التي ستتحكم في التنقل بين الصفحات الخمس للعميل
 class RootPage extends StatefulWidget {
   const RootPage({super.key});
 
@@ -64,7 +62,6 @@ class _RootPageState extends State<RootPage> {
 
   int _currentIndex = 0;
 
-  // قائمة الصفحات (تأكد من إنشاء هذه الكلاسات في ملفاتها)
   final List<Widget> _pages = [
     HomeScreen(),
     CartScreen(),

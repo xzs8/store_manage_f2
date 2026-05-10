@@ -16,7 +16,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   final User? user = FirebaseAuth.instance.currentUser;
 
-  // دالة حفظ البيانات
   Future<void> _updateProfile() async {
     if (user != null) {
       try {
@@ -26,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           'phone': phoneController.text,
           'email': user!.email,
           'lastUpdate': DateTime.now(),
-        }, SetOptions(merge: true)); // استخدام merge لضمان عدم حذف الحقول القديمة
+        }, SetOptions(merge: true));
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("تم تحديث البيانات بنجاح")),
@@ -39,7 +38,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  // دالة تسجيل الخروج
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut();
   }
@@ -83,7 +81,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 30),
 
-              // زر الحفظ
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -95,7 +92,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               const SizedBox(height: 10),
 
-              // زر تسجيل الخروج
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
